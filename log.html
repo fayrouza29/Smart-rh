@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion - Smart RH</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assests/log.css">
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="index.html" class="logo">
+          <i class="fas fa-brain"></i>
+          <h1>Smart RH</h1>
+        </a>
+        
+      </div>
+    </div>
+  </header>
+
+  <!-- Auth Forms -->
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h2>Connexion à Smart RH</h2>
+        <p>Connectez-vous avec vos identifiants</p>
+      </div>
+
+      <!-- Affichage des erreurs -->
+      <div id="errorMessage" style="display: none; background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 6px; margin-bottom: 20px; text-align: center;"></div>
+
+      <!-- Formulaire unique -->
+      <form id="loginForm" action="backend/log.php" method="POST">
+        <!-- Sélection du rôle -->
+        <div class="role-selection">
+          <button type="button" class="role-btn active" data-role="employee">
+            <i class="fas fa-user"></i>
+            Employé
+          </button>
+          <button type="button" class="role-btn" data-role="admin">
+            <i class="fas fa-cog"></i>
+            Admin
+          </button>
+        </div>
+
+        <!-- Champs login -->
+        <div class="form-group">
+          <label for="email">Adresse email</label>
+          <input type="email" id="email" name="email" placeholder="votre@email.com" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" name="password" placeholder="Votre mot de passe" required>
+        </div>
+
+        <!-- Champ caché rôle -->
+        <input type="hidden" id="role" name="role" value="employee">
+
+        <!-- Bouton submit -->
+        <button type="submit" class="btn btn-primary">Se connecter</button>
+      </form>
+
+      <div class="form-footer">
+        <p>Première connexion ? <a href="sign.html">Activer votre compte</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2023 Smart RH. Tous droits réservés. | <a href="#" style="color: #ccc;">Politique de confidentialité</a></p>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    // Gestion du choix de rôle
+    const roleBtns = document.querySelectorAll(".role-btn");
+    const roleInput = document.getElementById("role");
+
+    roleBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        // Supprime l'état actif des autres boutons
+        roleBtns.forEach(b => b.classList.remove("active"));
+        // Active le bouton cliqué
+        btn.classList.add("active");
+        // Change la valeur du champ caché
+        roleInput.value = btn.getAttribute("data-role");
+      });
+    });
+
+    // Afficher les messages d'erreur
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    if (error) {
+      document.getElementById('errorMessage').textContent = decodeURIComponent(error);
+      document.getElementById('errorMessage').style.display = 'block';
+    }
+  </script>
+
+  <script src="assests/style.js"></script>
+</body>
+</html>

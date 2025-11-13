@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activation de Compte - Smart RH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assests/sign.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-brain"></i>
+                    <h1>Smart RH</h1>
+                </a>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Auth Forms -->
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Activation de votre compte</h2>
+                <p>Finalisez la création de votre compte Smart RH</p>
+            </div>
+
+            <!-- Affichage des erreurs -->
+            <div id="errorMessage" style="display: none; background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 6px; margin-bottom: 20px; text-align: center;"></div>
+
+            <div class="steps">
+                <div class="step completed">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Informations de base</div>
+                </div>
+                <div class="step active">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Création du mot de passe</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Confirmation</div>
+                </div>
+            </div>
+
+            <!-- FORMULAIRE CORRIGÉ -->
+            <form action="backend/sign.php" method="POST" id="activationForm">
+                <div class="form-group">
+                    <label for="firstname">Prénom</label>
+                    <input type="text" id="firstname" name="firstname" placeholder="Votre prénom" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lastname">Nom</label>
+                    <input type="text" id="lastname" name="lastname" placeholder="Votre nom" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Adresse email</label>
+                    <input type="email" id="email" name="email" placeholder="nouvel.utilisateur@entreprise.com" required>
+                </div>
+
+                <div class="password-requirements">
+                    <h4>Exigences de sécurité du mot de passe</h4>
+                    <ul>
+                        <li id="req-length"><i class="fas fa-check-circle valid" style="display: none;"></i><i class="fas fa-times-circle" style="color: var(--danger);"></i> Au moins 8 caractères</li>
+                        <li id="req-uppercase"><i class="fas fa-check-circle valid" style="display: none;"></i><i class="fas fa-times-circle" style="color: var(--danger);"></i> Une lettre majuscule</li>
+                        <li id="req-number"><i class="fas fa-check-circle valid" style="display: none;"></i><i class="fas fa-times-circle" style="color: var(--danger);"></i> Un chiffre</li>
+                        <li id="req-special"><i class="fas fa-check-circle valid" style="display: none;"></i><i class="fas fa-times-circle" style="color: var(--danger);"></i> Un caractère spécial</li>
+                    </ul>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Nouveau mot de passe</label>
+                    <input type="password" id="password" name="password" placeholder="Créez votre mot de passe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Confirmer le mot de passe</label>
+                    <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirmez votre mot de passe" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="roleSelect">Sélectionnez votre rôle :</label>
+                    <select id="roleSelect" name="role" aria-label="Choisir le rôle">
+                        <option value="employee" selected>Employé</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn" id="activateBtn">Activer mon compte</button>
+            </form>
+
+            <div class="form-footer">
+                <p>Vous avez déjà un compte ? <a href="log.html">Connectez-vous</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Smart RH. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="assests/style.js"></script>
+    
+    <script>
+    // Validation JavaScript avant envoi
+    const pwd = document.getElementById('password');
+    const pwd2 = document.getElementById('confirm-password');
+    const activateBtn = document.getElementById('activateBtn');
+    const reqLength = document.getElementById('req-length');
+    const reqUpper = document.getElementById('req-uppercase');
+    const reqNumber = document.getElementById('req-number');
+    const reqSpecial = document.getElementById('req-special');
+
+    function setReqState(li, ok) {
+        if (!li) return;
+        const checks = li.querySelector('.fa-check-circle');
+        const times = li.querySelector('.fa-times-circle');
+        if (ok) {
+            li.style.color = '#16a34a';
+            if (checks) { checks.style.display = 'inline-block'; checks.style.color = '#16a34a'; }
+            if (times) { times.style.display = 'none'; }
+        } else {
+            li.style.color = '';
+            if (checks) { checks.style.display = 'none'; }
+            if (times) { times.style.display = 'inline-block'; times.style.color = 'var(--danger)'; }
+        }
+    }
+
+    function validatePasswordLive() {
+        const v = pwd.value || '';
+        const okLength = v.length >= 8;
+        const okUpper = /[A-Z]/.test(v);
+        const okNumber = /[0-9]/.test(v);
+        const okSpecial = /[^A-Za-z0-9]/.test(v);
+        setReqState(reqLength, okLength);
+        setReqState(reqUpper, okUpper);
+        setReqState(reqNumber, okNumber);
+        setReqState(reqSpecial, okSpecial);
+        // Laisser le bouton actif; la validation finale se fait à la soumission
+        if (activateBtn) activateBtn.disabled = false;
+    }
+
+    pwd.addEventListener('input', validatePasswordLive);
+    pwd2.addEventListener('input', validatePasswordLive);
+
+    document.getElementById('activationForm').addEventListener('submit', function(e) {
+        const password = pwd.value;
+        const confirmPassword = pwd2.value;
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Les mots de passe ne correspondent pas !');
+            return false;
+        }
+        if (password.length < 8) {
+            e.preventDefault();
+            alert('Le mot de passe doit contenir au moins 8 caractères');
+            return false;
+        }
+        if (!( /[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password) )) {
+            e.preventDefault();
+            alert('Le mot de passe ne respecte pas les exigences.');
+            return false;
+        }
+        return true;
+    });
+
+    // Init UI state
+    validatePasswordLive();
+
+    // Afficher les messages d'erreur
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    if (error) {
+        document.getElementById('errorMessage').textContent = decodeURIComponent(error);
+        document.getElementById('errorMessage').style.display = 'block';
+    }
+    </script>
+</body>
+</html>
